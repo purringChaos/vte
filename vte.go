@@ -411,15 +411,6 @@ func (v *Terminal) UnSelectAll() {
 	C.vte_terminal_unselect_all(v.Native())
 }
 
-// CopyClipboard places the selected text in the terminal in the
-// GDK_SELECTION_CLIPBOARD selection.
-//
-// Deprecated since 0.50. Use CopyClipboardFormat with FormatText instead.
-//
-func (v *Terminal) CopyClipboard() {
-	C.vte_terminal_copy_clipboard(v.Native())
-}
-
 // CopyClipboardFormat places the selected text in the terminal in the
 // GDK_SELECTION_CLIPBOARD selection in the form specified by format.
 //
