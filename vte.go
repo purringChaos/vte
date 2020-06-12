@@ -1,4 +1,4 @@
-x// Package vte is a cgo binding for Vte. Supports version 2.91 (0.40) and later.
+// Package vte is a cgo binding for Vte. Supports version 2.91 (0.40) and later.
 //
 // This package provides the Vte terminal without any GTK dependency.
 //
