@@ -1,4 +1,4 @@
-// Package vte is a cgo binding for Vte. Supports version 2.91 (0.40) and later.
+x// Package vte is a cgo binding for Vte. Supports version 2.91 (0.40) and later.
 //
 // This package provides the Vte terminal without any GTK dependency.
 //
@@ -265,58 +265,6 @@ func onAsyncOnExec(terminal *C.VteTerminal, cpid C.GPid, cerr *C.GError, ccallID
 		e = errors.New(C.GoString((*C.char)(cerr.message)))
 	}
 	cmd.OnExec(int(cpid), e)
-}
-
-// ExecSync starts the given command in the terminal. Deprecated since 0.48.
-// It's a wrapper around vte_terminal_spawn_sync.
-//
-func (v *Terminal) ExecSync(cwd string, args []string, env map[string]string) (int, error) {
-
-	var ccwd *C.char
-	if cwd != "" {
-		ccwd = C.CString(cwd)
-		defer C.free(unsafe.Pointer(ccwd))
-	}
-
-	cargs := C.make_strings(C.int(len(args)) + 1)
-	for i, j := range args {
-		ptr := C.CString(j)
-		defer C.free(unsafe.Pointer(ptr))
-		C.set_string(cargs, C.int(i), ptr)
-	}
-	C.set_string(cargs, C.int(len(args)), nil) // null terminated list.
-
-	cenv := C.make_strings(C.int(len(env)) + 1)
-	i := 0
-	for k, v := range env {
-		ptr := C.CString(fmt.Sprintf("%s=%s", k, v))
-		defer C.free(unsafe.Pointer(ptr))
-		C.set_string(cenv, C.int(i), ptr)
-		i++
-	}
-	C.set_string(cenv, C.int(len(env)), nil) // null terminated list.
-
-	var cerr *C.GError
-	var cpid C.GPid
-
-	C.vte_terminal_spawn_sync(v.Native(),
-		C.VTE_PTY_DEFAULT, // VtePtyFlags
-		ccwd,              // const char *working_directory
-		cargs,             // char **argv
-		cenv,              // char **envv
-		C.G_SPAWN_SEARCH_PATH, // GSpawnFlags
-		nil,   // GSpawnChildSetupFunc
-		nil,   // gpointer child_setup_data
-		&cpid, // GPid *child_pid
-		nil,   // GCancellable *cancellable
-		&cerr, // GError **error
-	)
-	if cerr != nil {
-		defer C.g_error_free(cerr)
-		return 0, errors.New(C.GoString((*C.char)(cerr.message)))
-	}
-
-	return int(cpid), nil
 }
 
 // SetBgColorFromString sets the background color for text which does not have a
